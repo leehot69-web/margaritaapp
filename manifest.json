@@ -1,0 +1,45 @@
+
+{
+  "short_name": "RanchoApp",
+  "name": "Mi Ranchito: Mar y Leña",
+  "description": "Sistema profesional de pedidos y gestión para Mi Ranchito Mar y Leña. Rápido, intuitivo y eficiente.",
+  "icons": [
+    {
+      "src": "https://i.imgur.com/8bfbsEL.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.imgur.com/8bfbsEL.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://i.imgur.com/8bfbsEL.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://i.imgur.com/8bfbsEL.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Menú Digital Interactivo"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "id": "/?source=pwa",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
+  "orientation": "portrait",
+  "theme_color": "#E5252A",
+  "background_color": "#000000",
+  "lang": "es",
+  "categories": ["business", "food"]
+}

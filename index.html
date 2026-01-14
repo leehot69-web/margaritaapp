@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="es" class="h-full overflow-hidden">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="https://i.imgur.com/8bfbsEL.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Sistema de Pedidos</title>
+    
+    <!-- PWA & iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pedidos">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/8bfbsEL.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#E5252A">
+
+    <style>
+      :root {
+        --brand-color: #E5252A;
+        --brand-color-dark: #C41F24;
+        --brand-shadow-color: rgba(229, 37, 42, 0.25);
+        --page-bg-color: #F9FAFB;
+        --accent-color: #00AEEF;
+      }
+
+      /* Temas */
+      body.theme-red {
+        --brand-color: #E5252A;
+        --brand-color-dark: #C41F24;
+        --brand-shadow-color: rgba(229, 37, 42, 0.25);
+        --page-bg-color: #F9FAFB;
+      }
+      body.theme-blue {
+        --brand-color: #2563EB;
+        --brand-color-dark: #1D4ED8;
+        --brand-shadow-color: rgba(37, 99, 235, 0.25);
+        --page-bg-color: #F9FAFB;
+      }
+      body.theme-green {
+        --brand-color: #059669;
+        --brand-color-dark: #047857;
+        --brand-shadow-color: rgba(5, 150, 105, 0.25);
+        --page-bg-color: #F9FAFB;
+      }
+      body.theme-dark {
+        --brand-color: #1F2937;
+        --brand-color-dark: #111827;
+        --brand-shadow-color: rgba(31, 41, 55, 0.25);
+        --page-bg-color: #F9FAFB;
+      }
+      body.theme-margarita {
+        --brand-color: #F99D1C; /* Naranja del timón */
+        --brand-color-dark: #D47F00;
+        --brand-shadow-color: rgba(249, 157, 28, 0.25);
+        --page-bg-color: #001A4B; /* Azul profundo del fondo del logo */
+        --accent-color: #00AEEF; /* Celeste de las olas */
+      }
+
+      html, body, #root {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #000000;
+        transition: background-color 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
+        overflow: hidden;
+      }
+
+      .text-brand { color: var(--brand-color); }
+      .bg-brand { background-color: var(--brand-color); }
+      .border-brand { border-color: var(--brand-color); }
+      
+      /* Mapeo de clases existentes para no romper UI */
+      .bg-red-600 { background-color: var(--brand-color) !important; }
+      .text-red-600 { color: var(--brand-color) !important; }
+      .border-red-600 { border-color: var(--brand-color) !important; }
+      .bg-red-50 { background-color: color-mix(in srgb, var(--brand-color), white 90%) !important; }
+      .text-red-800 { color: var(--brand-color-dark) !important; }
+
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      @keyframes shake {
+        10%, 90% { transform: translate3d(-1px, 0, 0) scale(1.05); }
+        20%, 80% { transform: translate3d(2px, 0, 0) scale(1.05); }
+        30%, 50%, 70% { transform: translate3d(-3px, 0, 0) scale(1.05); }
+        40%, 60% { transform: translate3d(3px, 0, 0) scale(1.05); }
+      }
+      .shake-animation { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="h-full overflow-hidden">
+    <div id="root" class="h-full w-full"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
