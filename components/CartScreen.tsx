@@ -133,9 +133,11 @@ const CartScreen: React.FC<CartScreenProps> = (props) => {
 
                             <div className="flex justify-between items-center mt-3 border-t border-gray-50 pt-3">
                                 <div className="flex items-center gap-1">
-                                    {!isOriginal && <button onClick={() => onRemoveItem(item.id)} className="text-[10px] text-red-500 font-black uppercase tracking-widest px-2 py-1 rounded active:bg-red-50">Borrar</button>}
+                                    <button onClick={() => onRemoveItem(item.id)} className={`text-[10px] ${isOriginal ? 'text-red-400 font-bold' : 'text-red-500 font-black'} uppercase tracking-widest px-2 py-1 rounded active:bg-red-50`}>
+                                        {isOriginal ? 'Borrar (PIN)' : 'Borrar'}
+                                    </button>
                                     {!isOriginal && <button onClick={() => onEditItem(item.id)} className="text-[10px] text-blue-600 font-black uppercase tracking-widest px-2 py-1 rounded active:bg-blue-50">Editar</button>}
-                                    {isOriginal && <span className="text-[9px] font-bold text-amber-600 italic">Producto ya procesado</span>}
+                                    {isOriginal && <span className="text-[9px] font-bold text-amber-600 italic">Previamente enviado</span>}
                                 </div>
                                 <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1 border">
                                     {!isOriginal ? (

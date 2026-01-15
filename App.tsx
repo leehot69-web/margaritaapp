@@ -53,6 +53,8 @@ function App() {
   const [isSalesHistoryModalOpen, setIsSalesHistoryModalOpen] = useState(false);
   const [isConfirmOrderModalOpen, setConfirmOrderModalOpen] = useState(false);
   const [pendingVoidReportId, setPendingVoidReportId] = useState<string | null>(null);
+  const [isAdminAuthForClearCart, setIsAdminAuthForClearCart] = useState(false);
+  const [pendingRemoveItemId, setPendingRemoveItemId] = useState<string | null>(null);
   const [pizzaBuilderItem, setPizzaBuilderItem] = useState<MenuItem | null>(null);
 
   // --- Lógica PWA ---
@@ -246,17 +248,34 @@ function App() {
   const handleUpdateQuantity = (cartItemId: string, newQuantity: number) => {
     const item = cart.find(i => i.id === cartItemId);
     if (item?.notes === 'original' && newQuantity < item.quantity) {
-      alert("No puedes reducir la cantidad de un producto ya servido.");
+      alert("No puedes reducir la cantidad de un producto ya servido sin autorización (usa el botón de Borrar con PIN si es necesario).");
       return;
     }
-
     if (newQuantity <= 0) {
-      setCart(prev => prev.filter(i => i.id !== cartItemId));
-    } else {
-      setCart(prev => prev.map(i => i.id === cartItemId ? { ...i, quantity: newQuantity } : i));
+      handleRemoveItem(cartItemId);
+      return;
     }
+    setCart(prev => prev.map(i => i.id === cartItemId ? { ...i, quantity: newQuantity } : i));
     setTriggerCartShake(true);
     setTimeout(() => setTriggerCartShake(false), 500);
+  };
+
+  const handleRemoveItem = (id: string) => {
+    const item = cart.find(i => i.id === id);
+    const isEditing = !!editingReportId;
+
+    if (item?.notes === 'original' || isEditing) {
+      setPendingRemoveItemId(id);
+    } else {
+      setCart(prev => prev.filter(i => i.id !== id));
+    }
+  };
+
+  const executeRemoveItem = () => {
+    if (pendingRemoveItemId) {
+      setCart(prev => prev.filter(i => i.id !== pendingRemoveItemId));
+      setPendingRemoveItemId(null);
+    }
   };
 
   const handleAddItem = (item: MenuItem, selectedModifiers: SelectedModifier[], quantity: number) => {
@@ -365,19 +384,17 @@ function App() {
 
   // Función corregida: Garantiza el reset total del estado
   const handleClearCart = useCallback(() => {
-    const isEditing = !!editingReportId;
-    const msg = isEditing
-      ? "¿Seguro que deseas ABANDONAR la edición actual? Se perderán los cambios no guardados."
-      : "¿Seguro que deseas borrar todo el pedido actual y empezar de cero?";
+    setIsAdminAuthForClearCart(true);
+  }, []);
 
-    if (window.confirm(msg)) {
-      setCart([]);
-      setEditingReportId(null);
-      setCustomerDetails({ name: '', phone: '', paymentMethod: 'Efectivo', instructions: '' });
-      setCurrentView('menu');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [editingReportId]);
+  const executeClearCart = () => {
+    setCart([]);
+    setEditingReportId(null);
+    setCustomerDetails({ name: '', phone: '', paymentMethod: 'Efectivo', instructions: '' });
+    setCurrentView('menu');
+    setIsAdminAuthForClearCart(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const finalizeOrder = (isPaid: boolean = true) => {
     const cartTotal = cart.reduce((acc, item) => {
@@ -503,8 +520,8 @@ function App() {
 
           {(() => {
             switch (currentView) {
-              case 'menu': return <MenuScreen menu={menu} cart={cart} onAddItem={handleAddItem} onUpdateQuantity={handleUpdateQuantity} onRemoveItem={(id) => setCart(prev => prev.filter(i => i.id !== id))} onClearCart={handleClearCart} cartItemCount={cart.reduce((acc, item) => acc + item.quantity, 0)} onOpenModifierModal={setModifierModalItem} onOpenPizzaBuilder={setPizzaBuilderItem} onGoToCart={() => setCurrentView('cart')} businessName={businessName} businessLogo={businessLogo} triggerShake={triggerCartShake} showInstallButton={showInstallBtn} onInstallApp={handleInstallClick} activeRate={activeRate} isEditing={!!editingReportId} />;
-              case 'cart': return <CartScreen cart={cart} onUpdateQuantity={handleUpdateQuantity} onRemoveItem={(id) => setCart(prev => prev.filter(i => i.id !== id))} onClearCart={handleClearCart} onBackToMenu={() => setCurrentView('menu')} onGoToCheckout={() => setCurrentView('checkout')} onEditItem={(id) => { const item = cart.find(i => i.id === id); if (item) { setEditingCartItemId(id); for (const cat of menu) { const original = cat.items.find(i => i.name === item.name); if (original) { setModifierModalItem(original); break; } } } }} activeRate={activeRate} isEditing={!!editingReportId} />;
+              case 'menu': return <MenuScreen menu={menu} cart={cart} onAddItem={handleAddItem} onUpdateQuantity={handleUpdateQuantity} onRemoveItem={handleRemoveItem} onClearCart={handleClearCart} cartItemCount={cart.reduce((acc, item) => acc + item.quantity, 0)} onOpenModifierModal={setModifierModalItem} onOpenPizzaBuilder={setPizzaBuilderItem} onGoToCart={() => setCurrentView('cart')} businessName={businessName} businessLogo={businessLogo} triggerShake={triggerCartShake} showInstallButton={showInstallBtn} onInstallApp={handleInstallClick} activeRate={activeRate} isEditing={!!editingReportId} />;
+              case 'cart': return <CartScreen cart={cart} onUpdateQuantity={handleUpdateQuantity} onRemoveItem={handleRemoveItem} onClearCart={handleClearCart} onBackToMenu={() => setCurrentView('menu')} onGoToCheckout={() => setCurrentView('checkout')} onEditItem={(id) => { const item = cart.find(i => i.id === id); if (item) { setEditingCartItemId(id); for (const cat of menu) { const original = cat.items.find(i => i.name === item.name); if (original) { setModifierModalItem(original); break; } } } }} activeRate={activeRate} isEditing={!!editingReportId} />;
               case 'checkout': return <CheckoutScreen cart={cart} customerDetails={customerDetails} paymentMethods={['Efectivo', 'Pago Móvil', 'Zelle', 'Divisas']} onUpdateDetails={setCustomerDetails} onBack={() => setCurrentView('cart')} onSubmitOrder={() => setConfirmOrderModalOpen(true)} onEditUserDetails={handleLogout} onClearCart={handleClearCart} activeRate={activeRate} isEditing={!!editingReportId} />;
               case 'settings': return <SettingsScreen settings={settings} onSaveSettings={setSettings} onGoToTables={() => setCurrentView('menu')} waiter={session.waiter} onLogout={handleLogout} waiterAssignments={{}} onSaveAssignments={{}} storeProfiles={[{ id: 'main', name: businessName, logo: businessLogo, menu: menu, whatsappNumber: session.targetNumber, modifierGroups: modifierGroups, theme: theme, paymentMethods: [] }]} onUpdateStoreProfiles={(profiles) => { const p = Array.isArray(profiles) ? profiles[0] : (typeof profiles === 'function' ? profiles([])[0] : null); if (p) { setBusinessName(p.name); setMenu(p.menu); setModifierGroups(p.modifierGroups); setTheme(p.theme); } }} activeTableNumbers={[]} onBackupAllSalesData={() => { }} onClearAllSalesData={() => { if (window.confirm("¿Borrar definitivamente todo el historial?")) { setReports([]); } }} onConnectPrinter={handleConnectPrinter} onDisconnectPrinter={handleDisconnectPrinter} isPrinterConnected={isPrinterConnected} printerName={printerDevice?.name} onPrintTest={handlePrintTest} />;
               case 'reports': return <ReportsScreen reports={reports} onGoToTables={() => setCurrentView('menu')} onDeleteReports={(ids) => { setReports(prev => prev.filter(r => !ids.includes(r.id))); return true; }} settings={settings} onStartNewDay={handleStartNewDay} currentWaiter={session.waiter} onOpenSalesHistory={() => setIsSalesHistoryModalOpen(true)} onReprintSaleRecord={handleReprintSaleRecord} isPrinterConnected={isPrinterConnected} onEditPendingReport={handleEditPendingReport} onVoidReport={handleVoidReport} />;
@@ -533,7 +550,13 @@ function App() {
       )}
       {isSalesHistoryModalOpen && <SalesHistoryModal reports={reports} onClose={() => setIsSalesHistoryModalOpen(false)} />}
       {pendingVoidReportId && (
-        <AdminAuthModal adminPin={settings.adminPin || '0000'} onClose={() => setPendingVoidReportId(null)} onSuccess={executeVoidReport} />
+        <AdminAuthModal adminPin={settings.adminPin || '0000'} onClose={() => setPendingVoidReportId(null)} onSuccess={executeVoidReport} title="Anular Ticket" />
+      )}
+      {isAdminAuthForClearCart && (
+        <AdminAuthModal adminPin={settings.adminPin || '0000'} onClose={() => setIsAdminAuthForClearCart(false)} onSuccess={executeClearCart} title="Eliminar Pedido Completo" />
+      )}
+      {pendingRemoveItemId && (
+        <AdminAuthModal adminPin={settings.adminPin || '0000'} onClose={() => setPendingRemoveItemId(null)} onSuccess={executeRemoveItem} title="Eliminar Producto del Pedido" />
       )}
     </>
   );

@@ -202,14 +202,16 @@ const ReportsScreen: React.FC<ReportsScreenProps> = ({ reports, onGoToTables, on
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
                                         Añadir más productos
                                     </button>
-                                    <button
-                                        onClick={() => onVoidReport(activeSale.id)}
-                                        className="w-full py-3 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 border border-red-100"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                        Anular Ticket (Admin PIN)
-                                    </button>
                                 </div>
+                            )}
+                            {activeSale.notes !== 'ANULADO' && (
+                                <button
+                                    onClick={() => onVoidReport(activeSale.id)}
+                                    className="w-full py-3 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 border border-red-100"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    Anular Ticket (Admin PIN)
+                                </button>
                             )}
                             <button onClick={() => onReprintSaleRecord(activeSale)} disabled={!isPrinterConnected || activeSale.notes === 'ANULADO'} className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest disabled:bg-gray-400">Imprimir Recibo</button>
                             <button onClick={() => setActiveSale(null)} className="w-full py-3 bg-gray-200 text-gray-700 rounded-2xl font-bold uppercase tracking-widest">Cerrar Detalle</button>
